@@ -4,7 +4,7 @@
 
 from Useful.XboxOneController import XboxOneController as Controller
 from Useful.useful import control
-from Config.topic_turtleBot import topicName, topicMaximas, middleValues, stopPosition
+from Config.topic_turtleBot import topicName, topicMaximas, middleValues, centralValues, stopPosition
 import rospy
 from geometry_msgs.msg import Twist
 

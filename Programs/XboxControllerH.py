@@ -4,7 +4,7 @@
 
 from Useful.XboxOneController import XboxOneController as Controller
 from Useful.useful import control
-from Config.topic_hexapod import topicName, topicMaximas, middleValues, stopPosition
+from Config.topic_hexapod import topicName, topicMaximas, middleValues, centralValues, stopPosition
 import rospy
 from geometry_msgs.msg import Twist
 
@@ -33,8 +33,8 @@ if __name__ == '__main__':
 			SLR = topicMaximas["TY"]["m"],
 			SRU = topicMaximas["RY"]["M"],
 			SRD = topicMaximas["RY"]["m"],
-			SRL = topicMaximas["RZ"]["m"],
-			SRR = topicMaximas["RZ"]["M"]
+			SRL = topicMaximas["RZ"]["M"],
+			SRR = topicMaximas["RZ"]["m"]
 		)
 		controller.start()
 
