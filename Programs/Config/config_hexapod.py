@@ -39,7 +39,7 @@ def scaleChangeTH(v):
 	newV = Twist()
 
 	newV.linear.x = scaleChange(v.linear.x, topicMaximas["TX"]["m"], topicMaximas["TX"]["M"], hexapodMaximas["TX"]["m"], hexapodMaximas["TX"]["M"])
-	newV.linear.y = scaleChange(v.linear.y, topicMaximas["TY"]["m"], topicMaximas["TY"]["M"], hexapodMaximas["TY"]["m"], hexapodMaximas["TY"]["M"])
+	newV.linear.y = scaleChange(v.linear.y, topicMaximas["TY"]["M"], topicMaximas["TY"]["m"], hexapodMaximas["TY"]["m"], hexapodMaximas["TY"]["M"])
 	newV.linear.z = scaleChange(v.linear.z, topicMaximas["TZ"]["m"], topicMaximas["TZ"]["M"], hexapodMaximas["TZ"]["m"], hexapodMaximas["TZ"]["M"])
 	newV.angular.x = scaleChange(v.angular.x, topicMaximas["RX"]["m"], topicMaximas["RX"]["M"], hexapodMaximas["RX"]["m"], hexapodMaximas["RX"]["M"])
 	newV.angular.y = scaleChange(v.angular.y, topicMaximas["RY"]["m"], topicMaximas["RY"]["M"], hexapodMaximas["RY"]["m"], hexapodMaximas["RY"]["M"])
