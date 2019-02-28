@@ -6,7 +6,7 @@ import rospy,time,serial
 #from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from Config._serial_frame import serial_frame
-from Config.config_hexapod import scaleChangeTH
+from Config.config_hexapod import scaleChangeTH as scaleChange
 from Config.topic_hexapod import topicName
 
 
@@ -23,21 +23,16 @@ def checksum(serial_frame):
 
 
 def callback(data):
-	vector = scaleChangeTH(data)
+	vector = scaleChange(data)
 	serial_frame.header_byte = 255
 	serial_frame.right_v_byte = vector.angular.y
 	serial_frame.right_h_byte = vector.angular.z
 	serial_frame.left_v_byte = vector.linear.x
 	serial_frame.left_h_byte = vector.linear.y
-	serial.frame.button_byte = 16
+	serial_frame.button_byte = 16
 	serial_frame.end_byte = 0
 	serial_frame.checksum_byte = checksum(serial_frame)
 
-	ser.write(bytearray([serial_frame.header_byte,
-		serial_frame.right_v_byte, serial_frame.right_h_byte,
-		serial_frame.left_v_byte, serial_frame.left_h_byte,
-		serial_frame.button_byte, serial_frame.end_byte,
-		serial_frame.checksum_byte]))
 #    if data.data == "stop":
 #        serial_frame.right_v_byte = 128
 #        serial_frame.right_h_byte = 128
@@ -112,11 +107,35 @@ def arbotix_node():
 	rospy.init_node('Hexapod', anonymous=False)
 	print("Connected !")
 	rospy.Subscriber(topicName, Twist, callback)
-	rospy.spin()
+	while not rospy.is_shutdown():
+		ser.write(bytearray([serial_frame.header_byte,
+			serial_frame.right_v_byte, serial_frame.right_h_byte,
+			serial_frame.left_v_byte, serial_frame.left_h_byte,
+			serial_frame.button_byte, serial_frame.end_byte,
+			serial_frame.checksum_byte]))
+		time.sleep(0.033)
 
 
 if __name__ == '__main__':
-    try:
-        arbotix_node()
-    except rospy.ROSInterruptException:
-        pass
+	serial_frame.header_byte = 255
+	serial_frame.right_v_byte = 128
+	serial_frame.right_h_byte = 128
+	serial_frame.left_v_byte = 128
+	serial_frame.left_h_byte = 128
+	serial_frame.button_byte = 16
+	serial_frame.end_byte = 0
+	serial_frame.checksum_byte = checksum(serial_frame)
+
+	ser.write(bytearray([serial_frame.header_byte,
+		serial_frame.right_v_byte, serial_frame.right_h_byte,
+		serial_frame.left_v_byte, serial_frame.left_h_byte,
+		serial_frame.button_byte, serial_frame.end_byte,
+		serial_frame.checksum_byte]))
+
+	t0 = time.time()
+	while time.time() < t0 + 10:
+		pass
+	try:
+		arbotix_node()
+	except rospy.ROSInterruptException:
+		pass

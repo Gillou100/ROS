@@ -7,7 +7,7 @@ from Useful.useful import control
 from Config.topic_hexapod import topicName, topicMaximas, middleValues, centralValues, stopPosition
 import rospy
 from geometry_msgs.msg import Twist
-
+from copy import deepcopy
 
 if __name__ == '__main__':
 	try:
@@ -18,23 +18,17 @@ if __name__ == '__main__':
 		pub.publish(stopPosition)
 
 
-		twist = Twist()
-		twist.linear.x = middleValues["TX"]
-		twist.linear.y = middleValues["TY"]
-		twist.linear.z = middleValues["TZ"]
-		twist.angular.x = middleValues["RX"]
-		twist.angular.y = middleValues["RY"]
-		twist.angular.z = middleValues["RZ"]
+		twist = deepcopy(stopPosition)
 
 		controller = Controller(
-			SLU = topicMaximas["TX"]["M"],
-			SLD = topicMaximas["TX"]["m"],
-			SLL = topicMaximas["TY"]["M"],
-			SLR = topicMaximas["TY"]["m"],
-			SRU = topicMaximas["RY"]["M"],
-			SRD = topicMaximas["RY"]["m"],
-			SRL = topicMaximas["RZ"]["M"],
-			SRR = topicMaximas["RZ"]["m"]
+			SLU = topicMaximas["TX"]["forward"],
+			SLD = topicMaximas["TX"]["backward"],
+			SLL = topicMaximas["TY"]["left"],
+			SLR = topicMaximas["TY"]["right"],
+			SRU = topicMaximas["RY"]["lean forward"],
+			SRD = topicMaximas["RY"]["lean backward"],
+			SRL = topicMaximas["RZ"]["twist left"],
+			SRR = topicMaximas["RZ"]["twist right"]
 		)
 		controller.start()
 
@@ -43,12 +37,10 @@ if __name__ == '__main__':
 			if controller["A"]:
 				pub.publish(stopPosition)
 			else:
-				twist.linear.x = control(controller["SL"][1], centralValues["TX-"], centralValues["TX+"], middleValues["TX"])
-				twist.linear.y = control(controller["SL"][0], centralValues["TY-"], centralValues["TY+"], middleValues["TY"])
-				twist.linear.z = middleValues["TZ"]
-				twist.angular.x = middleValues["RX"]
-				twist.angular.y = control(controller["SR"][1], centralValues["RY-"], centralValues["RY+"], middleValues["RY"])
-				twist.angular.z = control(controller["SR"][0], centralValues["RZ-"], centralValues["RZ+"], middleValues["RZ"])
+				twist.linear.x = control(controller["SL"]["V"], centralValues["TX"][0], centralValues["TX"][1], middleValues["TX"])
+				twist.linear.y = control(controller["SL"]["H"], centralValues["TY"][0], centralValues["TY"][1], middleValues["TY"])
+				twist.angular.y = control(controller["SR"]["V"], centralValues["RY"][0], centralValues["RY"][1], middleValues["RY"])
+				twist.angular.z = control(controller["SR"]["H"], centralValues["RZ"][0], centralValues["RZ"][1], middleValues["RZ"])
 				pub.publish(twist)
 			rate.sleep()
 	finally:
