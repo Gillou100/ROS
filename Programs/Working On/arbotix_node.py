@@ -23,12 +23,11 @@ def checksum(serial_frame):
 
 
 def callback(data):
-	vector = scaleChange(data)
 	serial_frame.header_byte = 255
-	serial_frame.right_v_byte = vector.angular.y
-	serial_frame.right_h_byte = vector.angular.z
-	serial_frame.left_v_byte = vector.linear.x
-	serial_frame.left_h_byte = vector.linear.y
+	serial_frame.right_v_byte = data.angular.y
+	serial_frame.right_h_byte = data.angular.z
+	serial_frame.left_v_byte = data.linear.x
+	serial_frame.left_h_byte = data.linear.y
 	serial_frame.button_byte = 16
 	serial_frame.end_byte = 0
 	serial_frame.checksum_byte = checksum(serial_frame)

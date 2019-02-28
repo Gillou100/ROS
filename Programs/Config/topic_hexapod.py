@@ -3,61 +3,79 @@
 
 
 from geometry_msgs.msg import Twist
+import rospy
 
 
 topicName = 'hexapod/cmd_vel'
 
-
-topicMaximas = {
-	"TX" : {
-		"forward" : 255,
-		"backward" : 0
-	},
-	"TY" : {
-		"left" : 0,
-		"right" : 255
-	},
-	"TZ" : {
-		"up" : 255,
-		"down" : 0
-	},
-	"RX" : {
-		"lean left" : 0,
-		"lean right" : 255
-	},
-	"RY" : {
-		"lean forward" : 255,
-		"lean backward" : 0
-	},
-	"RZ" : {
-		"twist left" : 0,
-		"twist right" : 255
-	}
+maximasValues = {
+	"forward": 255,
+	"backward": 0,
+	"left": 0,
+	"right": 255,
+	"up": 255,
+	"down": 0,
+	"lean left": 0,
+	"lean right": 255,
+	"lean forward": 255,
+	"lean backward": 0,
+	"twist left": 0,
+	"twist right": 255
 }
-middleValues = {
-	"TX": (topicMaximas["TX"]["forward"] + topicMaximas["TX"]["backward"])/2,
-	"TY": (topicMaximas["TY"]["left"] + topicMaximas["TY"]["right"])/2,
-	"TZ": (topicMaximas["TZ"]["up"] + topicMaximas["TZ"]["down"])/2,
-	"RX": (topicMaximas["RX"]["lean left"] + topicMaximas["RX"]["lean right"])/2,
-	"RY": (topicMaximas["RY"]["lean forward"] + topicMaximas["RY"]["lean backward"])/2,
-	"RZ": (topicMaximas["RZ"]["twist left"] + topicMaximas["RZ"]["twist right"])/2
+stopValues = {
+	"transversal": int((maximasValues["forward"] + maximasValues["backward"])/2),
+	"lateral": int((maximasValues["left"] + maximasValues["right"])/2),
+	"height": int((maximasValues["up"] + maximasValues["down"])/2),
+	"twist transversal": int((maximasValues["lean left"] + maximasValues["lean right"])/2),
+	"twist lateral": int((maximasValues["lean forward"] + maximasValues["lean backward"])/2),
+	"twist height": int((maximasValues["twist left"] + maximasValues["twist right"])/2),
 }
 centralValues = {
-	"TX": [middleValues["TX"] + (topicMaximas["TX"]["forward"] - middleValues["TX"])/5, middleValues["TX"] + (topicMaximas["TX"]["backward"] - middleValues["TX"])/5],
-	"TY": [middleValues["TY"] + (topicMaximas["TY"]["left"] - middleValues["TY"])/5, middleValues["TY"] + (topicMaximas["TY"]["right"] - middleValues["TY"])/5],
-	"TZ": [middleValues["TZ"] + (topicMaximas["TZ"]["up"] - middleValues["TZ"])/5, middleValues["TZ"] + (topicMaximas["TZ"]["down"] - middleValues["TZ"])/5],
-	"RX": [middleValues["RX"] + (topicMaximas["RX"]["lean left"] - middleValues["RX"])/5, middleValues["RX"] + (topicMaximas["RX"]["lean right"] - middleValues["RX"])/5],
-	"RY": [middleValues["RY"] + (topicMaximas["RY"]["lean forward"] - middleValues["RY"])/5, middleValues["RY"] + (topicMaximas["RY"]["lean backward"] - middleValues["RY"])/5],
-	"RZ": [middleValues["RZ"] + (topicMaximas["RZ"]["twist left"] - middleValues["RZ"])/5, middleValues["RZ"] + (topicMaximas["RZ"]["twist right"] - middleValues["RZ"])/5]
+	"forward": stopValues["transversal"] + (maximasValues["forward"] - stopValues["transversal"])/5,
+	"backward": stopValues["transversal"] + (maximasValues["backward"] - stopValues["transversal"])/5,
+	"left": stopValues["lateral"] + (maximasValues["left"] - stopValues["lateral"])/5,
+	"right":  stopValues["lateral"] + (maximasValues["right"] - stopValues["lateral"])/5,
+	"up": stopValues["height"] + (maximasValues["up"] - stopValues["height"])/5,
+	"down": stopValues["height"] + (maximasValues["down"] - stopValues["height"])/5,
+	"lean left": stopValues["twist transversal"] + (maximasValues["lean left"] - stopValues["twist transversal"])/5,
+	"lean right": stopValues["twist transversal"] + (maximasValues["lean right"] - stopValues["twist transversal"])/5,
+	"lean forward": stopValues["twist lateral"] + (maximasValues["lean forward"] - stopValues["twist lateral"])/5,
+	"lean backward": stopValues["twist lateral"] + (maximasValues["lean backward"] - stopValues["twist lateral"])/5,
+	"twist left": stopValues["twist height"] + (maximasValues["twist left"] - stopValues["twist height"])/5,
+	"twist right": stopValues["twist height"] + (maximasValues["twist right"] - stopValues["twist height"])/5
 }
 
 stopPosition = Twist()
-stopPosition.linear.x = middleValues["TX"]
-stopPosition.linear.y = middleValues["TY"]
-stopPosition.linear.z = middleValues["TZ"]
-stopPosition.angular.x = middleValues["RX"]
-stopPosition.angular.y = middleValues["RY"]
-stopPosition.angular.z = middleValues["RZ"]
+stopPosition.linear.x = stopValues["transversal"]
+stopPosition.linear.y = stopValues["lateral"]
+stopPosition.linear.z = stopValues["height"]
+stopPosition.angular.x = stopValues["twist transversal"]
+stopPosition.angular.y = stopValues["twist lateral"]
+stopPosition.angular.z = stopValues["twist height"]
+
+pub = rospy.Publisher(topicName, Twist, queue_size = 1)
+
+
+def writeOnTopic(
+	transversal = stopValues["transversal"],
+	lateral = stopValues["lateral"],
+	height = stopValues["height"],
+	twistTransversal = stopValues["twist transversal"],
+	twistLateral = stopValues["twist lateral"],
+	twistHeight = stopValues["twist height"],
+	pubToWrite = pub,
+	stop = False):
+	if stop:
+		pubToWrite.publish(stopPosition)
+	else:
+		twist = Twist()
+		twist.linear.x = transversal
+		twist.linear.y = lateral
+		twist.linear.z = height
+		twist.angular.x = twistTransversal
+		twist.angular.y = twistLateral
+		twist.angular.z = twistHeight
+		pubToWrite.publish(twist)
 
 if __name__ == '__main__':
 	pass

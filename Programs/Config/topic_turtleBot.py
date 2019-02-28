@@ -3,37 +3,47 @@
 
 
 from geometry_msgs.msg import Twist
+import rospy
 
 
 topicName = '/cmd_vel'
 
-
-topicMaximas = {
-	"TX" : {
-		"forward" : 0.22,
-		"backward" : -0.22
-	},
-	"RZ" : {
-		"twist left" : 2.84,
-		"twist right" : -2.84
-	}
+maximasValues = {
+	"forward" : 0.22,
+	"backward" : -0.22,
+	"twist left" : 2.84,
+	"twist right" : -2.84
 }
-middleValues = {
-	"TX": (topicMaximas["TX"]["forward"] + topicMaximas["TX"]["backward"])/2,
-	"RZ": (topicMaximas["RZ"]["twist left"] + topicMaximas["RZ"]["twist right"])/2
+stopValues = {
+	"transversal": int((maximasValues["forward"] + maximasValues["backward"])/2),
+	"twist height": int((maximasValues["twist left"] + maximasValues["twist right"])/2),
 }
 centralValues = {
-	"TX": [middleValues["TX"] + (topicMaximas["TX"]["forward"] - middleValues["TX"])/5, middleValues["TX"] + (topicMaximas["TX"]["backward"] - middleValues["TX"])/5],
-	"RZ": [middleValues["RZ"] + (topicMaximas["RZ"]["twist left"] - middleValues["RZ"])/5, middleValues["RZ"] + (topicMaximas["RZ"]["twist right"] - middleValues["RZ"])/5]
+	"forward": stopValues["transversal"] + (maximasValues["forward"] - stopValues["transversal"])/5,
+	"backward": stopValues["transversal"] + (maximasValues["backward"] - stopValues["transversal"])/5,
+	"twist left": stopValues["twist height"] + (maximasValues["twist left"] - stopValues["twist height"])/5,
+	"twist right": stopValues["twist height"] + (maximasValues["twist right"] - stopValues["twist height"])/5
 }
 
 stopPosition = Twist()
-stopPosition.linear.x = middleValues["TX"]
-stopPosition.linear.y = 0
-stopPosition.linear.z = 0
-stopPosition.angular.x = 0
-stopPosition.angular.y = 0
-stopPosition.angular.z = middleValues["RZ"]
+stopPosition.linear.x = stopValues["transversal"]
+stopPosition.angular.z = stopValues["twist height"]
+
+pub = rospy.Publisher(topicName, Twist, queue_size = 1)
+
+
+def writeOnTopic(
+	transversal = stopValues["transversal"],
+	twistHeight = stopValues["twist height"],
+	pubToWrite = pub,
+	stop = False):
+	if stop:
+		pubToWrite.publish(stopPosition)
+	else:
+		twist = Twist()
+		twist.linear.x = transversal
+		twist.angular.z = twistHeight
+		pubToWrite.publish(twist)
 
 
 if __name__ == '__main__':
