@@ -4,7 +4,7 @@
 
 from Useful.XboxOneController import XboxOneController as Controller
 from Useful.useful import control
-from Config.topic_hexapod import maximasValues, stopValues, centralValues, writeOnTopic
+from Config.topic_hexapod import maximasValues, stopValues, minValues, writeOnTopic
 import rospy
 
 
@@ -34,10 +34,10 @@ if __name__ == '__main__':
 				writeOnTopic(stop = True)
 			else:
 				writeOnTopic(
-					transversal = control(controller["SL"]["V"], centralValues["forward"], centralValues["backward"], stopValues["transversal"]),
-					lateral = control(controller["SL"]["H"], centralValues["left"], centralValues["right"], stopValues["lateral"]),
-					twistLateral = control(controller["SR"]["V"], centralValues["lean forward"], centralValues["lean backward"], stopValues["pitch"]),
-					twistHeight = control(controller["SR"]["H"], centralValues["twist left"], centralValues["twist right"], stopValues["yaw"])
+					transversal = control(controller["SL"]["V"], minValues["forward"], minValues["backward"], stopValues["transversal"]),
+					lateral = control(controller["SL"]["H"], minValues["left"], minValues["right"], stopValues["lateral"]),
+					twistLateral = control(controller["SR"]["V"], minValues["lean forward"], minValues["lean backward"], stopValues["pitch"]),
+					twistHeight = control(controller["SR"]["H"], minValues["twist left"], minValues["twist right"], stopValues["yaw"])
 				)
 			rate.sleep()
 	finally:

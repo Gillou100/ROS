@@ -30,7 +30,7 @@ stopValues = {
 	"pitch": (maximasValues["lean forward"] + maximasValues["lean backward"])/2,
 	"yaw": (maximasValues["twist left"] + maximasValues["twist right"])/2,
 }
-centralValues = {
+minValues = {
 	"forward": stopValues["transversal"] + (maximasValues["forward"] - stopValues["transversal"])/5,
 	"backward": stopValues["transversal"] + (maximasValues["backward"] - stopValues["transversal"])/5,
 	"left": stopValues["lateral"] + (maximasValues["left"] - stopValues["lateral"])/5,

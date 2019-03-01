@@ -18,7 +18,7 @@ stopValues = {
 	"transversal": (maximasValues["forward"] + maximasValues["backward"])/2,
 	"yaw": (maximasValues["twist left"] + maximasValues["twist right"])/2,
 }
-centralValues = {
+minValues = {
 	"forward": stopValues["transversal"] + (maximasValues["forward"] - stopValues["transversal"])/5,
 	"backward": stopValues["transversal"] + (maximasValues["backward"] - stopValues["transversal"])/5,
 	"twist left": stopValues["yaw"] + (maximasValues["twist left"] - stopValues["yaw"])/5,
