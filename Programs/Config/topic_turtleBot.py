@@ -15,26 +15,26 @@ maximasValues = {
 	"twist right" : -2.84
 }
 stopValues = {
-	"transversal": int((maximasValues["forward"] + maximasValues["backward"])/2),
-	"twist height": int((maximasValues["twist left"] + maximasValues["twist right"])/2),
+	"transversal": (maximasValues["forward"] + maximasValues["backward"])/2,
+	"yaw": (maximasValues["twist left"] + maximasValues["twist right"])/2,
 }
 centralValues = {
 	"forward": stopValues["transversal"] + (maximasValues["forward"] - stopValues["transversal"])/5,
 	"backward": stopValues["transversal"] + (maximasValues["backward"] - stopValues["transversal"])/5,
-	"twist left": stopValues["twist height"] + (maximasValues["twist left"] - stopValues["twist height"])/5,
-	"twist right": stopValues["twist height"] + (maximasValues["twist right"] - stopValues["twist height"])/5
+	"twist left": stopValues["yaw"] + (maximasValues["twist left"] - stopValues["yaw"])/5,
+	"twist right": stopValues["yaw"] + (maximasValues["twist right"] - stopValues["yaw"])/5
 }
 
 stopPosition = Twist()
 stopPosition.linear.x = stopValues["transversal"]
-stopPosition.angular.z = stopValues["twist height"]
+stopPosition.angular.z = stopValues["yaw"]
 
 pub = rospy.Publisher(topicName, Twist, queue_size = 1)
 
 
 def writeOnTopic(
 	transversal = stopValues["transversal"],
-	twistHeight = stopValues["twist height"],
+	yaw = stopValues["yaw"],
 	pubToWrite = pub,
 	stop = False):
 	if stop:
@@ -42,7 +42,7 @@ def writeOnTopic(
 	else:
 		twist = Twist()
 		twist.linear.x = transversal
-		twist.angular.z = twistHeight
+		twist.angular.z = yaw
 		pubToWrite.publish(twist)
 
 

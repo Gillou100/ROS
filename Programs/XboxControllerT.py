@@ -31,7 +31,7 @@ if __name__ == '__main__':
 			else:
 				writeOnTopic(
 					transversal = control(controller["SL"]["V"], centralValues["forward"], centralValues["backward"], stopValues["transversal"]),
-					twistHeight = control(controller["SR"]["H"], centralValues["twist left"], centralValues["twist right"], stopValues["twist height"])
+					twistHeight = control(controller["SR"]["H"], centralValues["twist left"], centralValues["twist right"], stopValues["yaw"])
 				)
 			rate.sleep()
 	finally:
