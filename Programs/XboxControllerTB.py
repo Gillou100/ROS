@@ -4,7 +4,7 @@
 
 from Useful.XboxOneController import XboxOneController as Controller
 from Useful.useful import control
-from Config.topic_turtleBot import maximasValues, stopValues, minValues, writeOnTopic
+from Config.topic_turtle_bot import maximasValues, stopValues, minValues, writeOnTopic
 import rospy
 
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
 			else:
 				writeOnTopic(
 					transversal = control(controller["SL"]["V"], minValues["forward"], minValues["backward"], stopValues["transversal"]),
-					twistHeight = control(controller["SR"]["H"], minValues["twist left"], minValues["twist right"], stopValues["yaw"])
+					yaw = control(controller["SR"]["H"], minValues["twist left"], minValues["twist right"], stopValues["yaw"])
 				)
 			rate.sleep()
 	finally:

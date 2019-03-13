@@ -37,13 +37,14 @@ def arbotix_node():
 	rospy.init_node('Hexapod', anonymous=False)
 	print("Connected !")
 	rospy.Subscriber(topicName, Twist, callback)
+	rate = rospy.Rate(10)
 	while not rospy.is_shutdown():
 		ser.write(bytearray([serial_frame.header_byte,
 			serial_frame.right_v_byte, serial_frame.right_h_byte,
 			serial_frame.left_v_byte, serial_frame.left_h_byte,
 			serial_frame.button_byte, serial_frame.end_byte,
 			serial_frame.checksum_byte]))
-		time.sleep(0.033)
+		rate.sleep(0.033)
 
 
 if __name__ == '__main__':

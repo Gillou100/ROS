@@ -40,7 +40,7 @@ minValues = {
 	"lean left": stopValues["roll"] + (maximasValues["lean left"] - stopValues["roll"])/5,
 	"lean right": stopValues["roll"] + (maximasValues["lean right"] - stopValues["roll"])/5,
 	"lean forward": stopValues["pitch"] + (maximasValues["lean forward"] - stopValues["pitch"])/5,
-	"lean backward": stopValues["pitch"] + (maximasValues["lean backward"] - stopValues["twist lateral"])/5,
+	"lean backward": stopValues["pitch"] + (maximasValues["lean backward"] - stopValues["pitch"])/5,
 	"twist left": stopValues["yaw"] + (maximasValues["twist left"] - stopValues["yaw"])/5,
 	"twist right": stopValues["yaw"] + (maximasValues["twist right"] - stopValues["yaw"])/5
 }
