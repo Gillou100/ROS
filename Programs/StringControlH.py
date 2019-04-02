@@ -13,10 +13,12 @@ if __name__ == '__main__':
 		print("Connected !")
 		pub = rospy.Publisher('hexapod/serial_command', String, queue_size = 5)
 
-
 		rate = rospy.Rate(10)
 		while not rospy.is_shutdown():
-			pub.publish(input())
+			string = input(">")
+			if string == "fin":
+				break
+			pub.publish(string)
 			rate.sleep()
 	except rospy.ROSInterruptException:
 		pass
